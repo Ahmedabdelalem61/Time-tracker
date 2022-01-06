@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:time_tracker/services/auth.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({Key? key,required this.onSignOut,required this.auth}) : super(key: key);
-  late VoidCallback onSignOut ;
+  HomePage({Key? key,required this.auth}) : super(key: key);
   late final AuthBase auth;
 
   Future<void> _signOutAnonymously()async {
     try{
       await auth.signOut();
-      onSignOut();
     }catch(e){
         print(e);
     }

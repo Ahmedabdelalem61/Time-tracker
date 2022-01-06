@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:time_tracker/app/sign_in/sign_in_button.dart';
 import 'package:time_tracker/app/sign_in/social_sign_in_button.dart';
@@ -7,22 +5,34 @@ import 'package:time_tracker/services/auth.dart';
 
 class SignIn extends StatelessWidget {
 
-  SignIn(  {Key? key,required this.onSignIn,required this.auth}) : super(key: key);
+  SignIn({Key? key, required this.auth}) : super(key: key);
   late final AuthBase auth;
-  late void Function(User) onSignIn ;
 
-  late final Function? onPress;
-  Future<void> _signInAnonymously()async {
-    try{
-      final user = await auth.signInAnonymously();
-      onSignIn(user);
-    }catch(e){
-      if (kDebugMode) {
+  Future<void> _signInAnonymously() async {
+    try {
+      await auth.signInAnonymously();
+    } catch (e) {
         print(e);
-      }
     }
-
   }
+
+  Future<void> _signInWithGoogle() async {
+    try {
+      await auth.signInWithGoogle();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _signInWithAFacebook() async {
+    try {
+      await auth.signInWithFacebook();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,21 +63,21 @@ class SignIn extends StatelessWidget {
             height: 48.0,
           ),
           SocialSignInButton(
-              text: 'sign in with Google',
-              textColor: Colors.black87,
-              color: Colors.white,
-              onpress: () {},
-              assetName: 'images/google-logo.png',
-              ),
+            text: 'sign in with Google',
+            textColor: Colors.black87,
+            color: Colors.white,
+            onpress: _signInWithGoogle,
+            assetName: 'images/google-logo.png',
+          ),
           const SizedBox(
             height: 8.0,
           ),
           SocialSignInButton(
-              text: 'sign in with Facebook',
-              textColor: Colors.white,
-              color: const Color(0xFF334F92),
-              onpress: () {},
-            assetName: 'images/facebook-logo.png' ,
+            text: 'sign in with Facebook',
+            textColor: Colors.white,
+            color: const Color(0xFF334F92),
+            onpress: _signInWithAFacebook,
+            assetName: 'images/facebook-logo.png',
           ),
           const SizedBox(
             height: 8.0,
@@ -76,12 +86,15 @@ class SignIn extends StatelessWidget {
               text: 'sign in with email',
               textColor: Colors.white,
               color: Colors.teal.shade700,
-              onpress: () {}
-          ),
+              onpress: () {}),
           const SizedBox(
             height: 8.0,
           ),
-          const Text('or',style: TextStyle(fontSize: 16.0,color: Colors.black87),textAlign: TextAlign.center,),
+          const Text(
+            'or',
+            style: TextStyle(fontSize: 16.0, color: Colors.black87),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(
             height: 8.0,
           ),
@@ -89,12 +102,9 @@ class SignIn extends StatelessWidget {
               text: 'Go anonymous',
               textColor: Colors.black87,
               color: Colors.lime.shade300,
-              onpress: _signInAnonymously
-          ),
+              onpress: _signInAnonymously),
         ],
       ),
     );
   }
-
-
 }
