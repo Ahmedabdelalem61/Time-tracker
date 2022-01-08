@@ -4,11 +4,11 @@ import 'package:time_tracker/common_widgets/custom_raised_button.dart';
 class FormSubmitButton extends CustomRaisedButton {
   FormSubmitButton({
     required String text,
-    required VoidCallback onPress,
+     VoidCallback? onPress,
   }) : super(
             color: Colors.indigo,
             height: 44.0,
-            onPress: onPress,
+            onPress: onPress!,
             child: Text(
               (text),
               style: const TextStyle(fontSize: 20.0, color: Colors.white),
