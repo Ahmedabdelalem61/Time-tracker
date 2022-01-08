@@ -5,6 +5,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 abstract class AuthBase {
   User? get currentUser;
 
+
+  Future<User?> signInWithEmailAndPassword(String email,String password);
+  Future<User?> createUserWithEmailAndPassword(String email,String password);
+
   Future<User?> signInWithFacebook();
 
   Future<User?> signInWithGoogle();
@@ -34,7 +38,7 @@ class Auth implements AuthBase {
   @override
   Future<void> signOut() async {
     final facebookSigin = FacebookLogin();
-    //await facebookSigin.logOut();
+    facebookSigin.logOut();
     final googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
     await _firbaseAuth.signOut();
@@ -75,12 +79,15 @@ class Auth implements AuthBase {
       FacebookPermission.email,
       FacebookPermission.publicProfile,
     ]);
+
     switch (response.status) {
       case FacebookLoginStatus.success:
         final accessToken = response.accessToken;
         final userCredential = await _firbaseAuth.signInWithCredential(
           FacebookAuthProvider.credential(accessToken!.token),
+
         );
+
         return userCredential.user;
       case FacebookLoginStatus.cancel:
         throw FirebaseAuthException(
@@ -95,5 +102,17 @@ class Auth implements AuthBase {
       default:
         throw UnimplementedError();
     }
+
   }
+  @override
+  Future<User?> signInWithEmailAndPassword(String email,String password)async{
+    final userCredential = await _firbaseAuth.signInWithCredential(EmailAuthProvider.credential(email: email, password: password));
+    return userCredential.user;
+  }
+  @override
+  Future<User?> createUserWithEmailAndPassword(String email,String password)async{
+    final userCredential = await _firbaseAuth.createUserWithEmailAndPassword( email: email,password: password);
+    return userCredential.user;
+  }
+
 }

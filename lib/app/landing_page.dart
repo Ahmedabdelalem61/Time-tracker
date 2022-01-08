@@ -7,7 +7,7 @@ import 'package:time_tracker/services/auth.dart';
 
 class LandingPage extends StatelessWidget {
   LandingPage({Key? key,required this.auth}) : super(key: key);
-  late  AuthBase auth;
+  AuthBase auth;
 
 
   @override
