@@ -5,7 +5,7 @@ Future<bool?>? showAlertDialog({
   required BuildContext context,
   required String title,
   String? cancelText,
-  required String content,
+  required String? content,
   required String defaultActionText,
 })  async {
   if (Platform.isAndroid) {
@@ -16,7 +16,7 @@ Future<bool?>? showAlertDialog({
           return AlertDialog(
 
             title: Text(title),
-            content: Text(content),
+            content: Text(content!),
             actions: [
               if(cancelText!=null)
               ElevatedButton(
@@ -24,7 +24,7 @@ Future<bool?>? showAlertDialog({
                     print('cancel pressed');
                     return Navigator.of(context).pop(false);
                   },
-                  child:  Text(cancelText!)),
+                  child:  Text(cancelText)),
               ElevatedButton(
                   onPressed: (){
                     print('ok pressed');
@@ -41,7 +41,7 @@ Future<bool?>? showAlertDialog({
         builder: (context) {
           return CupertinoAlertDialog(
             title: Text(title),
-            content: Text(content),
+            content: Text(content!),
             actions: [
               if(cancelText!=null)
                 CupertinoDialogAction(

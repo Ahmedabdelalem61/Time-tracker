@@ -1,19 +1,16 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:time_tracker/common_widgets/show_alert_dialog.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker/services/auth.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({Key? key,required this.auth}) : super(key: key);
-  late final AuthBase auth;
 
-  Future<void> _signOut()async {
+  Future<void> _signOut(BuildContext context)async {
     try{
+      final auth = Provider.of<AuthBase>(context,listen: false);
       await auth.signOut();
     }catch(e){
         print(e);
     }
-
   }
 // the alert dialog return always with null
   Future<void> _confirmSignOut(BuildContext context)async{
@@ -40,7 +37,7 @@ class HomePage extends StatelessWidget {
           appBar: AppBar(
             title: const Text('Home Page'),
             actions: [
-              ElevatedButton(onPressed: ()=>_signOut(), child: const Text('Logout',style: TextStyle(fontSize: 18.0,color: Colors.white),))
+              ElevatedButton(onPressed: ()=>_signOut(context), child: const Text('Logout',style: TextStyle(fontSize: 18.0,color: Colors.white),))
             ],
           ),
         );

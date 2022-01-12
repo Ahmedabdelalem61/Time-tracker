@@ -1,16 +1,14 @@
-import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker/app/sign_in/form_submit_button.dart';
 import 'package:time_tracker/app/sign_in/validators.dart';
-import 'package:time_tracker/common_widgets/show_alert_dialog.dart';
+import 'package:time_tracker/common_widgets/show_exception_alert_dialog.dart';
 import 'package:time_tracker/services/auth.dart';
 
 enum EmailSignInFormType { signin, register }
 
 class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidator{
-  EmailSignInForm({required this.auth});
-
-  final AuthBase auth;
 
   @override
   State<EmailSignInForm> createState() => _EmailSignInFormState();
@@ -30,6 +28,15 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   bool _submited = false;
   bool _isLoading = false;
 
+  @override
+  void dispose(){
+    _passwordFocusNode.dispose();
+    _emailFocusNode.dispose();
+    _passwordController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
   void submit() async {
 
     setState(() {
@@ -37,15 +44,16 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       _isLoading = true;
     });
     try {
+      final auth = Provider.of<AuthBase>(context,listen: false);
       if (_formType == EmailSignInFormType.signin) {
-        await widget.auth.signInWithEmailAndPassword(_email, _password);
+        await auth.signInWithEmailAndPassword(_email, _password);
       } else {
-        await widget.auth.createUserWithEmailAndPassword(_email, _password);
+        await auth.createUserWithEmailAndPassword(_email, _password);
       }
-      print(widget.auth);
+      print(auth);
       Navigator.of(context).pop();
-    } catch (e) {
-      showAlertDialog(defaultActionText: 'Ok', title: 'signing in failure', content: e.toString(), context: context,);
+    } on FirebaseAuthException catch (e) {
+      showExceptionAlertDialog( context,title: 'sign in fail',exception: e);
     }finally{
       setState(() {
         _isLoading = false;

@@ -1,40 +1,84 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker/app/sign_in/email_sigin_page.dart';
 import 'package:time_tracker/app/sign_in/sign_in_button.dart';
 import 'package:time_tracker/app/sign_in/social_sign_in_button.dart';
+import 'package:time_tracker/common_widgets/show_exception_alert_dialog.dart';
 import 'package:time_tracker/services/auth.dart';
 
-class SignIn extends StatelessWidget {
-  SignIn({Key? key, required this.auth}) : super(key: key);
-  final AuthBase auth;
+class SignIn extends StatefulWidget {
 
-  Future<void> _signInAnonymously() async {
+  @override
+  State<SignIn> createState() => _SignInState();
+}
+////////start point
+class _SignInState extends State<SignIn> {
+
+  bool _isLoading = false;
+
+  void _showSignInError(BuildContext context,Exception exception){
+
+    if(exception is FirebaseException && exception.code == 'ERROR_ABORTED_BY_USER') {
+      return ;
+    }
+    showExceptionAlertDialog(context, title: 'sign in failed', exception: exception);
+  }
+
+  Future<void> _signInAnonymously(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
+      final auth = Provider.of<AuthBase>(context,listen: false);
       await auth.signInAnonymously();
-    } catch (e) {
+    } on Exception catch (e) {
+      _showSignInError(context, e);
       print(e);
+    } finally{
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
-  Future<void> _signInWithGoogle() async {
+  Future<void> _signInWithGoogle(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
+      final auth = Provider.of<AuthBase>(context,listen: false);
       await auth.signInWithGoogle();
-    } catch (e) {
+    } on Exception catch (e) {
+      _showSignInError(context, e);
       print(e);
+    } finally{
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
-  Future<void> _signInWithAFacebook() async {
+  Future<void> _signInWithAFacebook(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
+      final auth = Provider.of<AuthBase>(context,listen: false);
       await auth.signInWithFacebook();
-    } catch (e) {
+    } on Exception catch (e) {
+      _showSignInError(context, e);
       print(e);
+    } finally{
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   void signInWithEmail(BuildContext context) {
     Navigator.of(context).push<void>(MaterialPageRoute(
-        builder: (context) => EmailSignInPage(auth: auth,), fullscreenDialog: true));
+        builder: (context) => EmailSignInPage(), fullscreenDialog: true));
   }
 
   @override
@@ -58,11 +102,7 @@ class SignIn extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'Sign in',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 32.0),
-          ),
+          _buildHeader(),
           const SizedBox(
             height: 48.0,
           ),
@@ -70,7 +110,7 @@ class SignIn extends StatelessWidget {
             text: 'sign in with Google',
             textColor: Colors.black87,
             color: Colors.white,
-            onpress: _signInWithGoogle,
+            onpress: ()=>_signInWithGoogle(context),
             assetName: 'images/google-logo.png',
           ),
           const SizedBox(
@@ -80,7 +120,7 @@ class SignIn extends StatelessWidget {
             text: 'sign in with Facebook',
             textColor: Colors.white,
             color: const Color(0xFF334F92),
-            onpress: _signInWithAFacebook,
+            onpress: ()=>_signInWithAFacebook(context),
             assetName: 'images/facebook-logo.png',
           ),
           const SizedBox(
@@ -106,9 +146,19 @@ class SignIn extends StatelessWidget {
               text: 'Go anonymous',
               textColor: Colors.black87,
               color: Colors.lime.shade300,
-              onpress: _signInAnonymously),
+              onpress: ()=>_signInAnonymously(context)),
         ],
       ),
+    );
+  }
+  Widget _buildHeader(){
+    if(_isLoading){
+      return const Center(child: CircularProgressIndicator());
+    }
+    return const Text(
+      'Sign in',
+      textAlign: TextAlign.center,
+      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 32.0),
     );
   }
 }
