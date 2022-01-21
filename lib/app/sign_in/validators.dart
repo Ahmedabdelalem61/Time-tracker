@@ -5,7 +5,7 @@ abstract class StringValidator{
 class NonEmptyStringValidator implements StringValidator{
   @override
   bool isValid(String value) {
-    return value.isNotEmpty;
+    return  value.isNotEmpty;
   }
 
 }
