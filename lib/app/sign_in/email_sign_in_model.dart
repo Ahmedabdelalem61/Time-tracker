@@ -12,6 +12,7 @@ class EmailSignInModel with EmailAndPasswordValidator{
   final  EmailSignInFormType formType ;
   final  bool submitted ;
 // copy with method safe me from losing my immediate data and updating any of the model attribute safely without lost
+  // IMPORTANT NOTE when using bloc we use immutable version of these final var so we only inject new model to use again using copyWith method
  EmailSignInModel copyWith({String? email,String? password,bool? submitted,bool? isLoading,EmailSignInFormType? formType}){
    return EmailSignInModel(password: password??this.password,email: email??this.email,formType: formType??this.formType,isLoading: isLoading??this.isLoading);
  }
