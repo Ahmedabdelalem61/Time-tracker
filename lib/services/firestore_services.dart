@@ -8,11 +8,11 @@ class FirestoreServices{
   //_collectionStream method used to call stream of docs whatever the type of the collection as it was generic
   Stream<List<T>> collectionStream<T>(
       {required String path,
-        required T Function(Map<String, dynamic> data) builder}) {
+        required T Function(Map<String, dynamic> data,String documentId) builder}) {
     final reference = FirebaseFirestore.instance.collection(path);
     final snapShots = reference.snapshots();
     return snapShots.map((snapshot) =>
-        snapshot.docs.map((snapshot) => builder(snapshot.data())).toList());
+        snapshot.docs.map((snapshot) => builder(snapshot.data(),snapshot.id)).toList());
   }
 
 
