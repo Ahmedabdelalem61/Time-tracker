@@ -3,65 +3,93 @@ import 'package:time_tracker/app/sign_in/email_sign_in_model.dart';
 import 'package:time_tracker/app/sign_in/validators.dart';
 import 'package:time_tracker/services/auth.dart';
 
-class EmailSignInChangeModel with EmailAndPasswordValidator,ChangeNotifier{
-
-  EmailSignInChangeModel({required this.auth, this.email = '' ,  this.password = '',  this.isLoading = false,  this.formType = EmailSignInFormType.signin,  this.submitted = false});
-  final AuthBase? auth;
-  String email ;
-  String password ;
-  bool isLoading ;
-  EmailSignInFormType formType ;
-  bool submitted ;
+class EmailSignInChangeModel with EmailAndPasswordValidators, ChangeNotifier {
+  EmailSignInChangeModel({
+    required this.auth,
+    this.email = '',
+    this.password = '',
+    this.formType = EmailSignInFormType.signIn,
+    this.isLoading = false,
+    this.submitted = false,
+  });
+  final AuthBase auth;
+  String email;
+  String password;
+  EmailSignInFormType formType;
+  bool isLoading;
+  bool submitted;
 
   Future<void> submit() async {
-    updateWith(isLoading: true,submitted: true);
+    updateWith(submitted: true, isLoading: true);
     try {
-      if (formType == EmailSignInFormType.signin) {
-        await auth!.signInWithEmailAndPassword(email, password);
+      if (formType == EmailSignInFormType.signIn) {
+        await auth.signInWithEmailAndPassword(email, password);
       } else {
-        await auth!.createUserWithEmailAndPassword(email, password);
+        await auth.createUserWithEmailAndPassword(email, password);
       }
-    }  catch (e) {
+    } catch (e) {
       updateWith(isLoading: false);
-      rethrow ;
+      rethrow;
     }
   }
-// copy with method safe me from losing my immediate data and updating any of the model attribute safely without lost
-  // IMPORTANT NOTE when using bloc we use immutable version of these final var so we only inject new model to use again using copyWith method
- void updateWith({String? email,String? password,bool? submitted,bool? isLoading,EmailSignInFormType? formType}){
-  this.password =  password??this.password;
-  this.email = email??this.email;
-  this.formType = formType??this.formType;
-  this.isLoading = isLoading??this.isLoading;
-  notifyListeners();
- }
 
-  String get primaryButtonText => formType == EmailSignInFormType.signin ? 'Sign in' : 'Register';
-  String get  secondaryButtonText => formType == EmailSignInFormType.signin ? 'Need an account? Register' : 'Already have an account';
-  bool get canSubmit=>emailValidator.isValid(email) && passwordValidator.isValid(password) && !isLoading;
-  String? get   showPasswordText {
-    bool showerror = !submitted && !passwordValidator.isValid(password);
-    return showerror ? inValidPasswordErrorText : null;
-  }
-  String? get showEmailErrorText {
-    bool showerror = !submitted && !emailValidator.isValid(email);
-    return showerror ? inValidEmailErrorText : null;
+  String get primaryButtonText {
+    return formType == EmailSignInFormType.signIn
+        ? 'Sign in'
+        : 'Create an account';
   }
 
-  void toggleFormType(){
-    final formtype = formType == EmailSignInFormType.signin
+  String get secondaryButtonText {
+    return formType == EmailSignInFormType.signIn
+        ? 'Need an account? Register'
+        : 'Have an account? Sign in';
+  }
+
+  bool get canSubmit {
+    return emailValidator.isValid(email) &&
+        passwordValidator.isValid(password) &&
+        !isLoading;
+  }
+
+  String? get passwordErrorText {
+    bool showErrorText = submitted && !passwordValidator.isValid(password);
+    return showErrorText ? invalidPasswordErrorText : null;
+  }
+
+  String? get emailErrorText {
+    bool showErrorText = submitted && !emailValidator.isValid(email);
+    return showErrorText ? invalidEmailErrorText : null;
+  }
+
+  void toggleFormType() {
+    final formType = this.formType == EmailSignInFormType.signIn
         ? EmailSignInFormType.register
-        : EmailSignInFormType.signin;
+        : EmailSignInFormType.signIn;
     updateWith(
-        submitted: false,
-        isLoading: false,
-        formType: formtype,
-        password: '',
-        email: '');
+      email: '',
+      password: '',
+      formType: formType,
+      isLoading: false,
+      submitted: false,
+    );
   }
 
-  void updateEmail(String email)=>updateWith(email:email );
-  void updatePassword(String password)=>updateWith(password:password );
+  void updateEmail(String email) => updateWith(email: email);
 
+  void updatePassword(String password) => updateWith(password: password);
 
+  void updateWith({
+    String? email,
+    String? password,
+    EmailSignInFormType? formType,
+    bool? isLoading,
+    bool? submitted,
+  }) {
+    this.email = email ?? this.email;
+    this.password = password ?? this.password;
+    this.formType = formType ?? this.formType;
+    this.isLoading = isLoading ?? this.isLoading;
+    this.submitted = submitted ?? this.submitted;
+    notifyListeners();
+  }
 }

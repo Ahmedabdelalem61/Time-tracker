@@ -3,28 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker/app/landing_page.dart';
 import 'package:time_tracker/services/auth.dart';
+import 'package:time_tracker/services/database.dart';
 
-
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    //TODO: use cli to make ease of firebase initialization
-    //options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
-class MyApp extends StatelessWidget {
 
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider<AuthBase>(
-      create:(context)=>Auth(),
+      create: (context) => Auth(),
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
+        title: 'Time Tracker',
         theme: ThemeData(
           primarySwatch: Colors.indigo,
         ),
-        home: LandingPage(),
+        home: LandingPage(
+          databaseBuilder: (uid) => FirestoreDatabase(uid: uid),
+        ),
       ),
     );
   }

@@ -8,10 +8,10 @@ class FormSubmitButton extends CustomRaisedButton {
   }) : super(
             color: Colors.indigo,
             height: 44.0,
-            onPress: onPress!,
+            onPressed: onPress!,
             child: Text(
               (text),
               style: const TextStyle(fontSize: 20.0, color: Colors.white),
             ),
-            borderRadious: 4.0);
+      borderRadius: 4.0);
 }

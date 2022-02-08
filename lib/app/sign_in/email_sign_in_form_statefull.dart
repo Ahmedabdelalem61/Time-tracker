@@ -8,14 +8,14 @@ import 'package:time_tracker/common_widgets/show_exception_alert_dialog.dart';
 import 'package:time_tracker/services/auth.dart';
 
 
-class EmailSignInFormStatefull extends StatefulWidget with EmailAndPasswordValidator{
+class EmailSignInFormStatefull extends StatefulWidget with EmailAndPasswordValidators{
 
   @override
   State<EmailSignInFormStatefull> createState() => _EmailSignInFormStatefullState();
 }
 
 class _EmailSignInFormStatefullState extends State<EmailSignInFormStatefull> {
-  EmailSignInFormType _formType = EmailSignInFormType.signin;
+  EmailSignInFormType _formType = EmailSignInFormType.signIn;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
@@ -45,7 +45,7 @@ class _EmailSignInFormStatefullState extends State<EmailSignInFormStatefull> {
     });
     try {
       final auth = Provider.of<AuthBase>(context,listen: false);
-      if (_formType == EmailSignInFormType.signin) {
+      if (_formType == EmailSignInFormType.signIn) {
         await auth.signInWithEmailAndPassword(_email, _password);
       } else {
         await auth.createUserWithEmailAndPassword(_email, _password);
@@ -69,17 +69,17 @@ class _EmailSignInFormStatefullState extends State<EmailSignInFormStatefull> {
   void toggleFormType() {
     setState(() {
       _submited = false;
-      _formType = _formType == EmailSignInFormType.signin
+      _formType = _formType == EmailSignInFormType.signIn
           ? EmailSignInFormType.register
-          : EmailSignInFormType.signin;
+          : EmailSignInFormType.signIn;
     });
     _emailController.clear();
     _passwordController.clear();
   }
 
   List<Widget> _buildChilderen() {
-    final primaryText = _formType == EmailSignInFormType.signin ? 'Sign in' : 'Register';
-    final secondaryText = _formType == EmailSignInFormType.signin
+    final primaryText = _formType == EmailSignInFormType.signIn ? 'Sign in' : 'Register';
+    final secondaryText = _formType == EmailSignInFormType.signIn
         ? 'Need an account? Register'
         : 'Already have an account';
     bool _submitEnabled = widget.emailValidator.isValid(_email) && widget.passwordValidator.isValid(_password) &&!_isLoading;
@@ -111,7 +111,7 @@ class _EmailSignInFormStatefullState extends State<EmailSignInFormStatefull> {
     return TextField(
       decoration: InputDecoration(
         label: const Text('Password'),
-        errorText:showPasswordText?widget.inValidPasswordErrorText : null
+        errorText:showPasswordText?widget.invalidPasswordErrorText : null
       ),
       obscureText: true,
       controller: _passwordController,
@@ -129,7 +129,7 @@ class _EmailSignInFormStatefullState extends State<EmailSignInFormStatefull> {
       decoration:  InputDecoration(
         label: const Text('Email'),
         hintText: "example@email.com",
-          errorText:showEmailText?widget.inValidEmailErrorText:null
+          errorText:showEmailText?widget.invalidEmailErrorText:null
       ),
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,

@@ -1,32 +1,84 @@
+import 'dart:ui';
+
 import 'package:time_tracker/app/sign_in/validators.dart';
 
-enum EmailSignInFormType { signin, register }
+enum EmailSignInFormType { signIn, register }
 
-class EmailSignInModel with EmailAndPasswordValidator{
+class EmailSignInModel with EmailAndPasswordValidators {
+  EmailSignInModel({
+    this.email = '',
+    this.password = '',
+    this.formType = EmailSignInFormType.signIn,
+    this.isLoading = false,
+    this.submitted = false,
+  });
+  final String email;
+  final String password;
+  final EmailSignInFormType formType;
+  final bool isLoading;
+  final bool submitted;
 
-  EmailSignInModel({ this.email = '' ,  this.password = '',  this.isLoading = false,  this.formType = EmailSignInFormType.signin,  this.submitted = false});
-
-  final  String email ;
-  final  String password ;
-  final  bool isLoading ;
-  final  EmailSignInFormType formType ;
-  final  bool submitted ;
-// copy with method safe me from losing my immediate data and updating any of the model attribute safely without lost
-  // IMPORTANT NOTE when using bloc we use immutable version of these final var so we only inject new model to use again using copyWith method
- EmailSignInModel copyWith({String? email,String? password,bool? submitted,bool? isLoading,EmailSignInFormType? formType}){
-   return EmailSignInModel(password: password??this.password,email: email??this.email,formType: formType??this.formType,isLoading: isLoading??this.isLoading);
- }
-
-  String get primaryButtonText => formType == EmailSignInFormType.signin ? 'Sign in' : 'Register';
-  String get  secondaryButtonText => formType == EmailSignInFormType.signin ? 'Need an account? Register' : 'Already have an account';
-  bool get canSubmit=>emailValidator.isValid(email) && passwordValidator.isValid(password) && !isLoading;
-  String? get   showPasswordText {
-    bool showerror = !submitted && !passwordValidator.isValid(password);
-    return showerror ? inValidPasswordErrorText : null;
-  }
-  String? get showEmailErrorText {
-    bool showerror = !submitted && !emailValidator.isValid(email);
-    return showerror ? inValidEmailErrorText : null;
+  String get primaryButtonText {
+    return formType == EmailSignInFormType.signIn
+        ? 'Sign in'
+        : 'Create an account';
   }
 
+  String get secondaryButtonText {
+    return formType == EmailSignInFormType.signIn
+        ? 'Need an account? Register'
+        : 'Have an account? Sign in';
+  }
+
+  bool get canSubmit {
+    return emailValidator.isValid(email) &&
+        passwordValidator.isValid(password) &&
+        !isLoading;
+  }
+
+  String? get passwordErrorText {
+    bool showErrorText = submitted && !passwordValidator.isValid(password);
+    return showErrorText ? invalidPasswordErrorText : null;
+  }
+
+  String? get emailErrorText {
+    bool showErrorText = submitted && !emailValidator.isValid(email);
+    return showErrorText ? invalidEmailErrorText : null;
+  }
+
+  EmailSignInModel copyWith({
+    String? email,
+    String? password,
+    EmailSignInFormType? formType,
+    bool? isLoading,
+    bool? submitted,
+  }) {
+    return EmailSignInModel(
+      email: email ?? this.email,
+      password: password ?? this.password,
+      formType: formType ?? this.formType,
+      isLoading: isLoading ?? this.isLoading,
+      submitted: submitted ?? this.submitted,
+    );
+  }
+
+  @override
+  int get hashCode =>
+      hashValues(email, password, formType, isLoading, submitted);
+
+  @override
+  bool operator ==(other) {
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
+    final otherModel = other as EmailSignInModel;
+    return email == otherModel.email &&
+        password == otherModel.password &&
+        formType == otherModel.formType &&
+        isLoading == otherModel.isLoading &&
+        submitted == otherModel.submitted;
+  }
+
+  @override
+  String toString() =>
+      'email: $email, password: $password, formType: $formType, isLoading: $isLoading, submitted: $submitted';
 }

@@ -6,8 +6,8 @@ class FirestoreServices{
   static final instance = FirestoreServices._();
 
   //_collectionStream method used to call stream of docs whatever the type of the collection as it was generic
-  Stream<List<T>> collectionStream<T>(
-      {required String path,
+  Stream<List<T>> collectionStream<T>({
+        required String path,
         required T Function(Map<String, dynamic> data,String documentId) builder}) {
     final reference = FirebaseFirestore.instance.collection(path);
     final snapShots = reference.snapshots();
@@ -21,5 +21,10 @@ class FirestoreServices{
     print('path : $path , data : $data');
     final Reference = FirebaseFirestore.instance.doc(path);
     await Reference.set(data);
+  }
+
+  Future<void> deleteData({required String path}) async {
+    final Reference = FirebaseFirestore.instance.doc(path);
+    await Reference.delete();
   }
 }
