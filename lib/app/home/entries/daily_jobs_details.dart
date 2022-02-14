@@ -28,6 +28,7 @@ class DailyJobsDetails {
       .reduce((value, element) => value + element);
 
   /// splits all entries into separate groups by date
+  /// Hashing Entries under it's unique date
   static Map<DateTime, List<EntryJob>> _entriesByDate(List<EntryJob> entries) {
     Map<DateTime, List<EntryJob>> map = {};
     for (var entryJob in entries) {
@@ -47,7 +48,7 @@ class DailyJobsDetails {
     final byDate = _entriesByDate(entries);
     List<DailyJobsDetails> list = [];
     for (var date in byDate.keys) {
-      final entriesByDate = byDate[date]!;
+      final List<EntryJob> entriesByDate = byDate[date]!;
       final byJob = _jobsDetails(entriesByDate);
       list.add(DailyJobsDetails(date: date, jobsDetails: byJob));
     }

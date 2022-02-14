@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:time_tracker/app/home/entries/daily_jobs_details.dart';
 import 'package:time_tracker/app/home/entries/entries_list_tile.dart';

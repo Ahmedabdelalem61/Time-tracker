@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   void _select(TabItem tabItem) {
     if (tabItem == _currentTab) {
-      // pop to first route
+      // pop to first route as yuo have a state(navigatorKey) for every navigator
       navigatorKeys[tabItem]!.currentState?.popUntil((route) => route.isFirst);
     } else {
       setState(() => _currentTab = tabItem);
